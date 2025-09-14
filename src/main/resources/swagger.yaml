@@ -1,0 +1,237 @@
+openapi: 3.0.3
+info:
+  title: Inventory Core Service API
+  description: API para gerenciamento de eventos de inventário
+  version: 1.0.0
+  contact:
+    name: Inventory Team
+    email: inventory@mercadolibre.com
+
+servers:
+  - url: http://localhost:8080
+    description: Servidor de desenvolvimento
+
+paths:
+  /events:
+    post:
+      tags:
+        - Events
+      summary: Criar um novo evento
+      description: Cria um novo evento de inventário no sistema para teste.
+      operationId: createEvent
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateEventRequest'
+            examples:
+              stock_increase:
+                summary: Exemplo de aumento de estoque
+                value:
+                  eventType: CREATED
+                  changeType: INCREASE
+                  aggregateId: inventory-tech001-store001
+                  source: api-request
+                  productId: 660e8400-e29b-41d4-a716-446655440006
+                  storeId: 550e8400-e29b-41d4-a716-446655440001
+                  quantity: 10
+                  availableQuantity: 8
+                  reservedQuantity: 2
+              stock_decrease:
+                summary: Exemplo de diminuição de estoque
+                value:
+                  eventType: UPDATED
+                  changeType: DECREASE
+                  aggregateId: inventory-tech002-store002
+                  source: api-request
+                  productId: 660e8400-e29b-41d4-a716-446655440007
+                  storeId: 550e8400-e29b-41d4-a716-446655440002
+                  quantity: 5
+                  availableQuantity: 3
+                  reservedQuantity: 2
+      responses:
+        '201':
+          description: Evento criado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventResponse'
+        '400':
+          description: Dados de entrada inválidos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Evento já existe (conflito)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Erro interno do servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /events/update-inventory:
+    post:
+      tags:
+        - Events
+      summary: Atualizar inventário
+      description: Endpoint para atualizar o inventário.
+      operationId: migrateInventory
+      responses:
+        '204':
+          description: Migração iniciada com sucesso
+
+        '500':
+          description: Erro interno do servidor durante a migração
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    CreateEventRequest:
+      type: object
+      required:
+        - eventId
+        - eventType
+        - changeType
+        - aggregateId
+        - source
+        - productId
+        - storeId
+      properties:
+        eventType:
+          $ref: '#/components/schemas/EventType'
+        changeType:
+          $ref: '#/components/schemas/ChangeType'
+        eventId:
+            type: string
+            description: ID único do evento
+            maxLength: 255
+            example: evt-api-20240914-abc123
+        aggregateId:
+          type: string
+          description: ID único do agregado
+          maxLength: 255
+          example: inventory-tech001-store001
+        source:
+          type: string
+          description: Fonte do evento
+          maxLength: 50
+          example: api-request
+        productId:
+          type: string
+          description: ID do produto
+          maxLength: 255
+          example: 660e8400-e29b-41d4-a716-446655440006
+        storeId:
+          type: string
+          description: ID da loja
+          maxLength: 255
+          example: 550e8400-e29b-41d4-a716-446655440001
+        quantity:
+          type: integer
+          description: Quantidade total
+          minimum: 0
+          example: 10
+        availableQuantity:
+          type: integer
+          description: Quantidade disponível
+          minimum: 0
+          example: 8
+        reservedQuantity:
+          type: integer
+          description: Quantidade reservada
+          minimum: 0
+          example: 2
+
+    EventResponse:
+      type: object
+      properties:
+        eventId:
+          type: string
+          description: ID único do evento gerado
+          example: evt-api-20240914-abc123
+        eventType:
+          $ref: '#/components/schemas/EventType'
+        changeType:
+          $ref: '#/components/schemas/ChangeType'
+        aggregateId:
+          type: string
+          example: inventory-tech001-store001
+        source:
+          type: string
+          example: api-request
+        productId:
+          type: string
+          example: 660e8400-e29b-41d4-a716-446655440006
+        storeId:
+          type: string
+          example: 550e8400-e29b-41d4-a716-446655440001
+        quantity:
+          type: integer
+          example: 10
+        availableQuantity:
+          type: integer
+          example: 8
+        reservedQuantity:
+          type: integer
+          example: 2
+        processed:
+          type: boolean
+          description: Indica se o evento foi processado
+          example: false
+        createdAt:
+          type: string
+          format: date-time
+          description: Data e hora de criação do evento
+          example: 2024-09-14T15:30:00
+        processedAt:
+          type: string
+          format: date-time
+          description: Data e hora de processamento do evento
+          nullable: true
+          example: null
+
+    EventType:
+      type: string
+      enum:
+        - CREATED
+        - UPDATED
+      description: Tipo do evento
+      example: CREATED
+
+    ChangeType:
+      type: string
+      enum:
+        - INCREASE
+        - DECREASE
+      description: Tipo de mudança
+      example: INCREASE
+
+    ErrorResponse:
+      type: object
+      properties:
+        status:
+          type: integer
+          description: Código HTTP do erro
+          example: 400
+        error:
+          type: string
+          description: Tipo do erro
+          example: Bad Request
+        message:
+          type: string
+          description: Mensagem de erro
+          example: Dados de entrada inválidos
+        messageDetail:
+          type: string
+          description: Detalhes adicionais sobre o erro
+          example: O campo 'productId' é obrigatório e não foi fornecido.

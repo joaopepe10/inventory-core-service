@@ -1,5 +1,11 @@
 server:
+  servlet:
+    context-path: /api/inventory-core/v1
   port: 8081
+
+queue:
+  publisher:
+    exchange: subs-inventory-fanout
 
 spring:
   application:

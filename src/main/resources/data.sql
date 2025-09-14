@@ -1,5 +1,4 @@
--- Criar tabela de eventos se não existir
-CREATE TABLE IF NOT EXISTS events (
+CREATE TABLE IF NOT EXISTS tbl_events (
     event_id VARCHAR(50) PRIMARY KEY,
     event_type VARCHAR(50) NOT NULL,
     change_type VARCHAR(10) NOT NULL,
@@ -19,7 +18,7 @@ CREATE TABLE IF NOT EXISTS events (
 -- Este script cria eventos CREATED para cada registro de estoque inicial
 
 -- Inserir eventos correspondentes aos registros de estoque (apenas se não existirem)
-INSERT INTO events (event_id, event_type, change_type, aggregate_id, source, created_at, product_id, store_id, quantity, available_quantity, reserved_quantity, processed, processed_at)
+INSERT INTO tbl_events (event_id, event_type, change_type, aggregate_id, source, created_at, product_id, store_id, quantity, available_quantity, reserved_quantity, processed, processed_at)
 SELECT * FROM (VALUES
                    -- EVENTOS PARA TECNOLOGIA
                    -- iPhone 15 Pro (TECH001) - 3 lojas
@@ -107,8 +106,8 @@ SELECT * FROM (VALUES
 
                   ) AS new_events(event_id, event_type, change_type, aggregate_id, source, created_at, product_id, store_id, quantity, available_quantity, reserved_quantity, processed, processed_at)
 WHERE NOT EXISTS (
-    SELECT 1 FROM events
-    WHERE events.aggregate_id = new_events.aggregate_id
+    SELECT 1 FROM tbl_events
+    WHERE tbl_events.aggregate_id = new_events.aggregate_id
 );
 
 -- Verificar quantos eventos foram inseridos
@@ -117,7 +116,7 @@ SELECT
     source,
     event_type,
     change_type
-FROM events
+FROM tbl_events
 WHERE source = 'stock-migration-service'
 GROUP BY source, event_type, change_type
 ORDER BY event_type, change_type;

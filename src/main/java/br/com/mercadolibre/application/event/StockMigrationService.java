@@ -1,10 +1,8 @@
-package br.com.mercadolibre.domain.service;
+package br.com.mercadolibre.application.event;
 
 import br.com.mercadolibre.infra.message.model.ChangeType;
-import br.com.mercadolibre.infra.message.model.EventPayload;
 import br.com.mercadolibre.infra.message.model.EventType;
-import br.com.mercadolibre.infra.message.model.Payload;
-import br.com.mercadolibre.infra.sql.event.model.EventEntity;
+import br.com.mercadolibre.infra.sql.event.model.EventStockEntity;
 import br.com.mercadolibre.infra.sql.event.repository.EventRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Slf4j
 @Service
@@ -27,11 +24,10 @@ public class StockMigrationService {
     public void migrateStockToEvents() {
         log.info("Iniciando migração de estoque para eventos...");
 
-        List<EventEntity> events = createStockEvents();
+        List<EventStockEntity> events = createStockEvents();
 
         int processedCount = 0;
-        for (EventEntity event : events) {
-            // Verificar se o evento já existe
+        for (EventStockEntity event : events) {
             if (eventRepository.findByEventId(event.getEventId()).isEmpty()) {
                 eventRepository.save(event);
                 processedCount++;
@@ -45,8 +41,8 @@ public class StockMigrationService {
                 processedCount, events.size());
     }
 
-    private List<EventEntity> createStockEvents() {
-        List<EventEntity> events = new ArrayList<>();
+    private List<EventStockEntity> createStockEvents() {
+        List<EventStockEntity> events = new ArrayList<>();
         String source = "stock-migration-service";
         LocalDateTime now = LocalDateTime.now();
 
@@ -170,13 +166,13 @@ public class StockMigrationService {
         return events;
     }
 
-    private EventEntity createEvent(String eventIdBase, String productId, String storeId,
-                                   int quantity, int availableQuantity, int reservedQuantity,
-                                   String source, LocalDateTime createdAt) {
+    private EventStockEntity createEvent(String eventIdBase, String productId, String storeId,
+                                         int quantity, int availableQuantity, int reservedQuantity,
+                                         String source, LocalDateTime createdAt) {
         String eventId = eventIdBase + "-" + System.currentTimeMillis();
         String aggregateId = "inventory-" + extractProductCode(productId) + "-" + extractStoreCode(storeId);
 
-        return EventEntity.builder()
+        return EventStockEntity.builder()
                 .eventId(eventId)
                 .eventType(EventType.CREATED)
                 .changeType(ChangeType.INCREASE)
@@ -193,12 +189,12 @@ public class StockMigrationService {
                 .build();
     }
 
-    private EventEntity createZeroStockEvent(String eventIdBase, String productId, String storeId,
-                                           String source, LocalDateTime createdAt) {
+    private EventStockEntity createZeroStockEvent(String eventIdBase, String productId, String storeId,
+                                                  String source, LocalDateTime createdAt) {
         String eventId = eventIdBase + "-" + System.currentTimeMillis();
         String aggregateId = "inventory-" + extractProductCode(productId) + "-" + extractStoreCode(storeId);
 
-        return EventEntity.builder()
+        return EventStockEntity.builder()
                 .eventId(eventId)
                 .eventType(EventType.CREATED)
                 .changeType(ChangeType.DECREASE)

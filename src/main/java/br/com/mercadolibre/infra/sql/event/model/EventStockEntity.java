@@ -3,10 +3,7 @@ package br.com.mercadolibre.infra.sql.event.model;
 import br.com.mercadolibre.infra.message.model.ChangeType;
 import br.com.mercadolibre.infra.message.model.EventType;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
@@ -14,12 +11,14 @@ import java.time.LocalDateTime;
 import static jakarta.persistence.EnumType.STRING;
 
 @Entity
-@Table(name = "events")
-@Data
+@Table(name = "tbl_events")
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class EventEntity {
+@EqualsAndHashCode(of = "eventId")
+public class EventStockEntity {
 
     @Id
     @Column(name = "event_id", length = 50, nullable = false, updatable = false)
