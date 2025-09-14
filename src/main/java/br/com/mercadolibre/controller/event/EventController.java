@@ -32,8 +32,6 @@ public class EventController implements EventsApi {
                 .productId(request.getProductId())
                 .storeId(request.getStoreId())
                 .quantity(request.getQuantity())
-                .availableQuantity(request.getAvailableQuantity())
-                .reservedQuantity(request.getReservedQuantity())
                 .eventType(request.getEventType())
                 .build();
 

@@ -47,12 +47,6 @@ public class EventStockEntity {
     @Column(name = "quantity")
     private Integer quantity;
 
-    @Column(name = "available_quantity")
-    private Integer availableQuantity;
-
-    @Column(name = "reserved_quantity")
-    private Integer reservedQuantity;
-
     @Column(name = "processed", nullable = false)
     @Builder.Default
     private Boolean processed = false;

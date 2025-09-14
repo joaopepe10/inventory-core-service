@@ -9,8 +9,6 @@ import org.mapstruct.ReportingPolicy;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface EventStockMapper {
 
-    @Mapping(target = "availableQuantity", source = "message.payload.availableQuantity")
-    @Mapping(target = "reservedQuantity", source = "message.payload.reservedQuantity")
     @Mapping(target = "quantity", source = "message.payload.quantity")
     @Mapping(target = "productId", source = "message.payload.productId")
     @Mapping(target = "storeId", source = "message.payload.storeId")

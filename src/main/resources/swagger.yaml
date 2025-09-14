@@ -141,16 +141,6 @@ components:
           description: Quantidade total
           minimum: 0
           example: 10
-        availableQuantity:
-          type: integer
-          description: Quantidade disponível
-          minimum: 0
-          example: 8
-        reservedQuantity:
-          type: integer
-          description: Quantidade reservada
-          minimum: 0
-          example: 2
 
     EventResponse:
       type: object
@@ -178,12 +168,6 @@ components:
         quantity:
           type: integer
           example: 10
-        availableQuantity:
-          type: integer
-          example: 8
-        reservedQuantity:
-          type: integer
-          example: 2
         processed:
           type: boolean
           description: Indica se o evento foi processado

@@ -5,9 +5,8 @@ import br.com.mercadolibre.infra.message.model.Payload;
 import br.com.mercadolibre.infra.message.model.UpdateInventoryMessage;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.ReportingPolicy;
 
-@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
+@Mapper(componentModel = "spring")
 public interface EventMapper {
 
     @Mapping(target = "payload", expression = "java(toPayload(request))")
