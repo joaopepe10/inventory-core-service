@@ -12,6 +12,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
+import static br.com.mercadolibre.infra.message.model.ChangeType.DECREASE;
+import static br.com.mercadolibre.infra.message.model.ChangeType.INCREASE;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -44,6 +47,22 @@ public class EventStockService {
         }
 
     }
+
+    public Integer findCurrentStockByProductId(String productId) {
+        var entities = eventRepository.findCurrentStockByProductId(productId);
+        if (entities.isEmpty()) {
+            return 0;
+        }
+
+        return entities.stream()
+                .mapToInt(e -> {
+                    if (e.getChangeType() == INCREASE) return e.getQuantity();
+                    if (e.getChangeType() == DECREASE) return -e.getQuantity();
+                    return 0;
+                })
+                .sum();
+    }
+
 
     private void processInventoryUpdate(EventStockEntity eventEntity) {
         try {

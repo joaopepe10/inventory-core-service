@@ -94,6 +94,46 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
 
+  /stock/current/{productId}:
+    get:
+      tags:
+        - Stock
+      summary: Obter estoque atual por produto
+      description: Retorna o estoque atual para um produto específico.
+      operationId: getCurrentStockByProduct
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          description: ID do produto
+          schema:
+            type: string
+            example: 660e8400-e29b-41d4-a716-446655440006
+      responses:
+        '200':
+          description: Estoque atual do produto
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  quantity:
+                    type: integer
+                    description: Quantidade total em estoque
+                    example: 100
+        '404':
+          description: Produto não encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Erro interno do servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
 components:
   schemas:
     CreateEventRequest:
