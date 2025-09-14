@@ -1,8 +1,5 @@
-queue:
-  producer:
-    exchange: transactions.exchange
-    routing-key: order.update
-    queue-name: PROCESS_UPDATE_INVENTORY_QUEUE
+server:
+  port: 8081
 
 spring:
   application:
@@ -30,13 +27,19 @@ spring:
       hibernate:
         format_sql: true
         dialect: org.hibernate.dialect.H2Dialect
-    defer-datasource-initialization: true
+    defer-datasource-initialization: false
+
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
 
 management:
   endpoints:
     web:
       exposure:
-        include: health,info,metrics
+        include: health,info,metrics,h2-console
   endpoint:
     health:
       show-details: always

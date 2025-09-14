@@ -1,9 +1,3 @@
-queue:
-  producer:
-    exchange: transactions.exchange
-    routing-key: order.update
-    queue-name: PROCESS_UPDATE_INVENTORY_QUEUE
-
 spring:
   application:
     name: inventory-core-service
