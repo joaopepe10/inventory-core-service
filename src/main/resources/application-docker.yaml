@@ -1,3 +1,11 @@
+server:
+  servlet:
+    context-path: /api/inventory-core/v1
+
+queue:
+  publisher:
+    exchange: subs-inventory-fanout
+
 spring:
   application:
     name: inventory-core-service
@@ -26,11 +34,17 @@ spring:
         dialect: org.hibernate.dialect.H2Dialect
     defer-datasource-initialization: true
 
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
 management:
   endpoints:
     web:
       exposure:
-        include: health,info,metrics
+        include: health,info,metrics,h2-console
   endpoint:
     health:
       show-details: always

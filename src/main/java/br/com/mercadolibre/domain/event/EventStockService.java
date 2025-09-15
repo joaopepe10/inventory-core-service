@@ -38,12 +38,12 @@ public class EventStockService {
 
             processInventoryUpdate(eventEntity);
 
-            log.info("Evento processado com sucesso: eventId={}", eventPayload.eventId());
+            log.info("Evento processado com sucesso: eventId=[{}]", eventPayload.eventId());
             publisher.sendMessage(eventPayload);
         } catch (Exception e) {
-            log.error("Erro ao processar evento: eventId={}, erro={}",
+            log.error("Erro ao processar evento: eventId=[{}], erro={}",
                     eventPayload.eventId(), e.getMessage(), e);
-            throw e; // TODO VALIDAR RETRY E REPROCESSAMENTO
+            throw e;
         }
 
     }
