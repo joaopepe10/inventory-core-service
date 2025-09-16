@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import static br.com.mercadolibre.core.constants.RabbitMQConstants.SEND_EVENT_INVENTORY_QUEUE;
+import static br.com.mercadolibre.core.constants.RabbitMQConstants.SEND_EVENT_INVENTORY_QUEUE_DLQ;
 
 @Configuration
 @EnableRabbit
@@ -21,10 +22,27 @@ public class RabbitMQConfig {
     @Value("${queue.publisher.exchange}")
     private String publisherExchange;
 
+    @Value("${queue.publisher.dead-letter-exchange}")
+    private String deadLetterExchange;
+
+    @Value("${queue.publisher.dead-letter-routing-key}")
+    private String deadLetterRoutingKey;
+
     @Bean
     @Qualifier("publisherQueue")
     public Queue publisherQueue() {
-        return new Queue(SEND_EVENT_INVENTORY_QUEUE, true);
+        return QueueBuilder
+                .durable(SEND_EVENT_INVENTORY_QUEUE)
+                .withArgument(deadLetterExchange, publisherExchange.concat(".dlx"))
+                .withArgument(deadLetterRoutingKey, SEND_EVENT_INVENTORY_QUEUE_DLQ)
+                .build();
+    }
+
+    @Bean
+    public Queue publisherDlq() {
+        return QueueBuilder
+                .durable(SEND_EVENT_INVENTORY_QUEUE_DLQ)
+                .build();
     }
 
     @Bean
