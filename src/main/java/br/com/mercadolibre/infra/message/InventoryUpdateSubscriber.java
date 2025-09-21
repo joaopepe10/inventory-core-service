@@ -18,6 +18,7 @@ public class InventoryUpdateSubscriber {
 
     private final EventStockService eventStockService;
 
+
     @RabbitListener(queues = PROCESS_UPDATE_INVENTORY_QUEUE)
     public void receiveMessage(@Valid Message<UpdateInventoryMessage> message) {
         var eventPayload = message.getPayload();
