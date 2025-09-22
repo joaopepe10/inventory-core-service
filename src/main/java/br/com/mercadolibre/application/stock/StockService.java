@@ -8,9 +8,13 @@ import org.springframework.stereotype.Service;
 @Service
 public class StockService {
 
-    private final EventStockService eventRepository;
+    private final EventStockService eventStockService;
 
     public Integer getCurrentStockByProductId(String productId) {
-        return eventRepository.findCurrentStockByProductId(productId);
+        return eventStockService.findCurrentStockByProductId(productId);
+    }
+
+    public Integer getCurrentStockByProductIdAndStoreId(String productId, String storeId) {
+        return eventStockService.findCurrentStockByProductIdAndStoreId(productId, storeId);
     }
 }

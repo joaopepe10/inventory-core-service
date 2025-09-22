@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static br.com.mercadolibre.infra.message.model.ChangeType.DECREASE;
 import static br.com.mercadolibre.infra.message.model.ChangeType.INCREASE;
@@ -32,6 +33,11 @@ public class EventStockService {
                 return;
             }
 
+            if (eventPayload.changeType() == DECREASE && !isAvailableToPurchase(eventPayload)) {
+                log.warn("Estoque insuficiente para processar o evento: eventId={}", eventPayload.eventId());
+                return;
+            }
+
             var eventEntity = stockMapper.toEntity(eventPayload);
 
             eventRepository.save(eventEntity);
@@ -48,8 +54,25 @@ public class EventStockService {
 
     }
 
-    public Integer findCurrentStockByProductId(String productId) {
-        var entities = eventRepository.findCurrentStockByProductId(productId);
+    private boolean isAvailableToPurchase(UpdateInventoryMessage eventPayload) {
+        var sum = eventRepository.findCurrentStockByProductIdAndStoreId(eventPayload.payload().productId(), eventPayload.payload().storeId())
+                .stream()
+                .mapToInt(e -> {
+                    if (e.getChangeType() == INCREASE) return e.getQuantity();
+                    if (e.getChangeType() == DECREASE) return -e.getQuantity();
+                    return 0;
+                })
+                .sum();
+
+        return eventPayload.payload().quantity() <= sum;
+    }
+
+    public Integer findCurrentStockByProductIdAndStoreId(String productId, String storeId) {
+        var entities = eventRepository.findCurrentStockByProductIdAndStoreId(productId, storeId);
+        return makeSum(entities);
+    }
+
+    private Integer makeSum(List<EventStockEntity> entities) {
         if (entities.isEmpty()) {
             return 0;
         }
@@ -63,6 +86,10 @@ public class EventStockService {
                 .sum();
     }
 
+    public Integer findCurrentStockByProductId(String productId) {
+        var entities = eventRepository.findCurrentStockByProductId(productId);
+        return makeSum(entities);
+    }
 
     private void processInventoryUpdate(EventStockEntity eventEntity) {
         try {

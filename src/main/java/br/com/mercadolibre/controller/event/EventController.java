@@ -23,7 +23,6 @@ public class EventController implements EventsApi {
     @Override
     public ResponseEntity<EventResponse> createEvent(CreateEventRequest request) {
 
-
         eventApiService.createEvent(request);
 
         var response = EventResponse.builder()

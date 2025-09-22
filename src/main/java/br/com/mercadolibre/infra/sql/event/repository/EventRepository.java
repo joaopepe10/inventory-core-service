@@ -13,4 +13,6 @@ public interface EventRepository extends JpaRepository<EventStockEntity, String>
     Optional<EventStockEntity> findByEventId(String eventId);
 
     List<EventStockEntity> findCurrentStockByProductId(String productId);
+
+    List<EventStockEntity> findCurrentStockByProductIdAndStoreId(String productId, String storeId);
 }
