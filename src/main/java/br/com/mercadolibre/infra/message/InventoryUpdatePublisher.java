@@ -22,9 +22,8 @@ public class InventoryUpdatePublisher {
     @Value("${queue.publisher.exchange}")
     private String publisherExchange;
 
-
     public void sendMessage(@Valid UpdateInventoryMessage message) {
-        log.info("Enviando mensagem de atualização de inventário para a fila: {} e de loja {}", SEND_EVENT_INVENTORY_QUEUE, message.messageOrigin());
+        log.info("Enviando mensagem de atualização de inventário para a exchange: {} e de loja {}", publisherExchange, message.messageOrigin());
         rabbitTemplate.convertAndSend(publisherExchange, "", message);
     }
 }

@@ -42,10 +42,10 @@ public class EventStockService {
 
             var eventEntity = saveEvent(eventPayload);
 
-            processInventoryUpdate(eventEntity);
-
             log.info("Evento processado com sucesso: eventId=[{}]", eventPayload.eventId());
             publisher.sendMessage(eventPayload);
+
+            processInventoryUpdate(eventEntity);
         } catch (Exception e) {
             log.error("Erro ao processar evento: eventId=[{}], erro={}",
                     eventPayload.eventId(), e.getMessage(), e);
