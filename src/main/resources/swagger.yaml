@@ -51,12 +51,8 @@ paths:
                   availableQuantity: 3
                   reservedQuantity: 2
       responses:
-        '201':
-          description: Evento criado com sucesso
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/EventResponse'
+        '204':
+          description: Evento criado com sucesso, mas sem conteúdo na resposta
         '400':
           description: Dados de entrada inválidos
           content:

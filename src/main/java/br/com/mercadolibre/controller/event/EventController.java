@@ -21,20 +21,9 @@ public class EventController implements EventsApi {
     private final StockMigrationService migrationService;
 
     @Override
-    public ResponseEntity<EventResponse> createEvent(CreateEventRequest request) {
-
+    public ResponseEntity<Void> createEvent(CreateEventRequest request) {
         eventApiService.createEvent(request);
-
-        var response = EventResponse.builder()
-                .eventId(request.getEventId())
-                .source("Endpoint: " + request.getSource())
-                .productId(request.getProductId())
-                .storeId(request.getStoreId())
-                .quantity(request.getQuantity())
-                .eventType(request.getEventType())
-                .build();
-
-        return new ResponseEntity<>(response, CREATED);
+        return ResponseEntity.noContent().build();
     }
 
     @Override
@@ -42,4 +31,5 @@ public class EventController implements EventsApi {
         migrationService.migrateStockToEvents();
         return ResponseEntity.noContent().build();
     }
+
 }

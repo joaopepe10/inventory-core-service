@@ -35,12 +35,12 @@ public class EventStockService {
 
             if (eventPayload.changeType() == DECREASE && !isAvailableToPurchase(eventPayload)) {
                 log.warn("Estoque insuficiente para processar o evento: eventId={}", eventPayload.eventId());
+                // TODO IMPLEMENTAR LOGICA PARA TRATAR EVENTO DE ESTOQUE INSUFICIENTE E REPROCESSAR
+                saveEvent(eventPayload);
                 return;
             }
 
-            var eventEntity = stockMapper.toEntity(eventPayload);
-
-            eventRepository.save(eventEntity);
+            var eventEntity = saveEvent(eventPayload);
 
             processInventoryUpdate(eventEntity);
 
@@ -52,6 +52,11 @@ public class EventStockService {
             throw e;
         }
 
+    }
+
+    private EventStockEntity saveEvent(UpdateInventoryMessage eventPayload) {
+        var eventEntity = stockMapper.toEntity(eventPayload);
+        return eventRepository.save(eventEntity);
     }
 
     private boolean isAvailableToPurchase(UpdateInventoryMessage eventPayload) {
@@ -93,10 +98,8 @@ public class EventStockService {
 
     private void processInventoryUpdate(EventStockEntity eventEntity) {
         try {
-            eventEntity.setProcessed(true);
-            eventEntity.setProcessedAt(LocalDateTime.now());
+            eventEntity.markAsProcessed();
             eventRepository.save(eventEntity);
-
         } catch (Exception e) {
             log.error("Erro ao processar atualização de inventário: eventId={}", eventEntity.getEventId(), e);
             throw e;

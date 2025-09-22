@@ -58,5 +58,9 @@ public class EventStockEntity {
     @CreationTimestamp
     private LocalDateTime createdAt;
 
+    public void markAsProcessed() {
+        this.processed = true;
+        this.processedAt = LocalDateTime.now();
+    }
 }
 
