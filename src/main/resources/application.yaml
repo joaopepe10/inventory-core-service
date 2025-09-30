@@ -1,5 +1,6 @@
 server:
   servlet:
+    port: 8081
     context-path: /api/inventory-core/v1
 
 queue:
@@ -39,6 +40,15 @@ spring:
     port: 5672
     username: guest
     password: guest
+    listener:
+      simple:
+        prefetch: 1
+        retry:
+          enabled: true
+          initial-interval: 10s
+          max-interval: 30s
+          max-attempts: 3
+          multiplier: 2
 
 management:
   endpoints:
