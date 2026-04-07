@@ -400,14 +400,6 @@ mvn integration-test
 
 Este projeto está licenciado sob a [MIT License](LICENSE).
 
-## 📞 Suporte
-
-Para dúvidas ou suporte:
-
-- 📧 **Email**: inventory@mercadolibre.com
-- 📝 **Issues**: Use o sistema de issues do GitHub
-- 📖 **Wiki**: Documentação adicional na wiki do projeto
-
 ---
 
 ⭐ **Gostou do projeto? Deixe uma estrela!**
